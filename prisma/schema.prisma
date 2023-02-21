@@ -1,0 +1,54 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model User {
+  id Int @id @default(autoincrement())
+
+  username String @unique
+  password String
+
+  role Int @default(0)
+
+  balance Balance?
+  nfts    Nft[]
+  orders  Order[]
+}
+
+model Balance {
+  id Int @id @default(autoincrement())
+
+  userId Int @unique
+  amount Int @default(0)
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+model Nft {
+  id Int @id @default(autoincrement())
+
+  userId Int
+  nftId  Int
+
+  User User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Order {
+  id Int @id @default(autoincrement())
+
+  userId    Int
+  timestamp Int
+  price     Int
+  nftId     Int
+  status    Int @default(0)
+
+  user User @relation(fields: [userId], references: [id])
+}
